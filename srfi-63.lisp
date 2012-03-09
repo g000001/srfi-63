@@ -279,13 +279,14 @@
                         (apply #'array-set! nra row (reverse idxs)) )
                        ((if (not (eqv? (car dims) (length row)))
                             (error 'list->array
-                                   'non-rectangular 'array dims dimensions))
+                                   'non-rectangular 'array dims dimensions)
+                            T)
                         (do ((idx 0 (+ 1 idx))
                              (row row (cdr row)) )
                             ((>= idx (car dims)))
                           (l2ra (cdr dims) (cons idx idxs) (car row)) )))))
-        (l2ra dimensions '() lst)
-        nra) )))
+        (l2ra dimensions '() lst))
+      nra)))
 
 ;;@args array
 ;;Returns a rank-nested list consisting of all the elements, in
