@@ -595,4 +595,13 @@
   ;; A:bool
   (make-prototype-checker 'A:bool #'boolean? #'vector))
 
+
+(defmethod make-load-form ((obj array..rtd)
+                           &optional env)
+  (declare (ignore env))
+  `(array..construct ',(*array..dimensions obj)
+                     ',(*array..scales obj)
+                     ,(*array..offset obj)
+                     ,(*array..store obj)))
+
 ;;; eof
