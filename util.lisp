@@ -1,4 +1,4 @@
-(cl:in-package :srfi-63.internal)
+(cl:in-package "https://github.com/g000001/srfi-63#internals")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (progn
@@ -67,11 +67,6 @@
 (defun eqv? (x y)
   (cl:eql x y))
 
-(defun member (item list)
-  (cl:do ((e list (cdr e)))
-       ((cl:atom e))
-    (cl:when (cl:eql item (car e))
-      (cl:return e))))
 
 (defun memq (item list)
   (cl:do ((e list (cdr e)))
@@ -89,12 +84,6 @@
 
 (defun assv (item alist)
   (cl:assoc item alist :test #'eqv?))
-
-(defun assoc (item alist)
-  (cl:assoc item alist :test #'equal?))
-
-(defun equal? (x y)
-  (cl:equal x y))
 
 (defun set-car! (list obj)
   (cl:rplaca list obj))

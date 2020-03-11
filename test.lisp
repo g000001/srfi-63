@@ -1,8 +1,8 @@
-(cl:in-package :srfi-63.internal)
+(cl:in-package "https://github.com/g000001/srfi-63#internals")
 
-(def-suite srfi-63)
 
-(in-suite srfi-63)
+(def-suite* srfi-63)
+
 
 (test equal?
   (is-true (equal? 'a 'a))
@@ -13,8 +13,9 @@
   (is-true (equal? 2 2))
   (is-true (equal? (make-vector 5 'a)
                    (make-vector 5 'a)))
-  (is-true (equal? (make-array (a:fixn32b 4) 5 3)
-                   (make-array (a:fixn32b 4) 5 3))))
+  (is-true (equal? (make-array (A$fixn32b 4) 5 3)
+                   (make-array (A$fixn32b 4) 5 3))))
+
 
 (test fred
   (let* ((fred (make-array '#(nil) 8 8))
@@ -28,8 +29,10 @@
                              2 2))
     (is (eq 'foo (array-ref freds-center 0 0)))))
 
+
 (test array-dimensions
   (is (equal (array-dimensions (make-array '#() 3 5))
              '(3 5))))
 
-;;; eof
+
+;;; *EOF*

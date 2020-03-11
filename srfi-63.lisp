@@ -1,6 +1,6 @@
 ;;;; srfi-63.lisp
 
-(cl:in-package :srfi-63.internal)
+(cl:in-package "https://github.com/g000001/srfi-63#internals")
 
 ;;;;"array.scm" Arrays for Scheme
 ; Copyright (C) 2001, 2003, 2005, 2006 Aubrey Jaffer
@@ -27,7 +27,7 @@
 ;(require 'record)
 ;(require 'multiarg-apply)
 
-#|(define-function array..rtd
+#|(define-function array$rtd
   (make-record-type "array"
 		    '(dimensions
 		      scales		;list of dimension scales
@@ -36,50 +36,50 @@
 		      )))|#
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-record-type array..rtd
-    (*array..construct dimensions scales offset store)
+  (define-record-type array$rtd
+    (*array$construct dimensions scales offset store)
     *array?
-    (dimensions *array..dimensions)
-    (scales *array..scales)
-    (offset *array..offset)
-    (store *array..store) )
+    (dimensions *array$dimensions)
+    (scales *array$scales)
+    (offset *array$offset)
+    (store *array$store) )
 
-  (define-function array..dimensions
-    (let ((dimensions #'*array..dimensions))
+  (define-function array$dimensions
+    (let ((dimensions #'*array$dimensions))
       (lambda (array)
         (cond ((vector? array) (list (vector-length array)))
               ((string? array) (list (string-length array)))
               (:else (funcall dimensions array)) ))))
 
-  (define-function array..scales
-    (let ((scales #'*array..scales))
+  (define-function array$scales
+    (let ((scales #'*array$scales))
       (lambda (obj)
         (cond ((string? obj) '(1))
               ((vector? obj) '(1))
               (:else (funcall scales obj)) ))))
 
-  (define-function array..store
-    (let ((store #'*array..store))
+  (define-function array$store
+    (let ((store #'*array$store))
       (lambda (obj)
         (cond ((string? obj) obj)
               ((vector? obj) obj)
               (:else (funcall store obj)) ))))
 
-  (define-function array..offset
-    (let ((offset #'*array..offset))
+  (define-function array$offset
+    (let ((offset #'*array$offset))
       (lambda (obj)
         (cond ((string? obj) 0)
               ((vector? obj) 0)
               (:else (funcall offset obj)) ))))
 
-  (define-function array..construct #'*array..construct)
+  (define-function array$construct #'*array$construct)
 
   ;;@args obj
   ;;Returns @code{T} if the @1 is an array, and @code{#f} if not.
   (define-function array?
-    (let ((array..array? #'*array?))
+    (let ((array$array? #'*array?))
       (lambda (obj)
-        (or (string? obj) (vector? obj) (funcall array..array? obj))))) )
+        (or (string? obj) (vector? obj) (funcall array$array? obj))))) )
 
 ;;@noindent
 ;;@emph{Note:} Arrays are not disjoint from other Scheme types.
@@ -111,8 +111,8 @@
 ;;(equal? 2 2)                               @result{}  T
 ;;(equal? (make-vector 5 'a)
 ;;        (make-vector 5 'a))                @result{}  T
-;;(equal? (make-array (A..fixN32b 4) 5 3)
-;;        (make-array (A..fixN32b 4) 5 3))    @result{}  T
+;;(equal? (make-array (A$fixN32b 4) 5 3)
+;;        (make-array (A$fixN32b 4) 5 3))    @result{}  T
 ;;(equal? (make-array '#(foo) 3 3)
 ;;        (make-array '#(foo) 3 3))          @result{}  T
 ;;(equal? (lambda (x) x)
@@ -134,7 +134,7 @@
 				    (aref obj2 idx))))
 		   (negative? idx)))))
 	((and (array? obj1) (array? obj2))
-	 (and (equal? (array..dimensions obj1) (array..dimensions obj2))
+	 (and (equal? (array$dimensions obj1) (array$dimensions obj2))
 	      (letrec ((rascan
 			(lambda (dims idxs)
 			  (if (null? dims)
@@ -143,14 +143,14 @@
 			      (do ((res T (rascan (cdr dims) (cons idx idxs)))
 				   (idx (+ -1 (car dims)) (+ -1 idx)))
 				  ((or (not res) (negative? idx)) res))))))
-		(rascan (reverse (array..dimensions obj1)) '()))))
+		(rascan (reverse (array$dimensions obj1)) '()))))
 	(:else NIL)))
 
 ;;@body
 ;;Returns the number of dimensions of @1.  If @1 is not an array, 0 is
 ;;returned.
 (define-function (array-rank obj)
-  (if (array? obj) (length (array..dimensions obj)) 0))
+  (if (array? obj) (length (array$dimensions obj)) 0))
 
 ;;@args array
 ;;Returns a list of dimensions.
@@ -159,7 +159,7 @@
 ;;(array-dimensions (make-array '#() 3 5))
 ;;   @result{} (3 5)
 ;;@end example
-(define-function array-dimensions #'array..dimensions)
+(define-function array-dimensions #'array$dimensions)
 
 ;;@args prototype k1 @dots{}
 ;;
@@ -175,8 +175,8 @@
 ;;with the element at the origin of @1.
 (define-function (make-array prototype . dimensions)
   (cl:let (prot pdims onedim? tcnt)
-    (setq prot (array..store prototype))
-    (setq pdims (array..dimensions prototype))
+    (setq prot (array$store prototype))
+    (setq pdims (array$dimensions prototype))
     (setq onedim? (eqv? 1 (length dimensions)))
     (setq tcnt (apply #'* dimensions))
     (let ((initializer
@@ -196,7 +196,7 @@
                         (apply #'make-vector tcnt initializer) )))
                (labels ((loop (dims scales)
                               (if (null? dims)
-                                  (array..construct dimensions
+                                  (array$construct dimensions
                                                     (cdr scales)
                                                     0
                                                     store )
@@ -230,7 +230,7 @@
 ;;@end example
 (define-function (make-shared-array array mapper . dimensions)
   (cl:let (odl rank shape)
-    (setq odl (array..scales array))
+    (setq odl (array$scales array))
     (setq rank (length dimensions))
     (setq shape
           (map (lambda (dim) (if (list? dim) dim (list 0 (+ -1 dim))))
@@ -243,14 +243,14 @@
          (uvts '() (cons uvt uvts)) )
         ((negative? idx)
          (let ((ker0 (apply #'+ (map #'* odl (apply mapper uvt)))))
-           (array..construct
+           (array$construct
             (map (lambda (dim) (+ 1 (- (cadr dim) (car dim)))) shape)
             (map (lambda (uvt) (- (apply #'+ (map #'* odl (apply mapper uvt))) ker0))
                  uvts )
             (apply #'+
-                   (array..offset array)
+                   (array$offset array)
                    (map #'* odl (apply mapper (map #'car shape))) )
-            (array..store array) ))))))
+            (array$store array) ))))))
 
 ;;@args rank proto list
 ;;@3 must be a rank-nested list consisting of all the elements, in
@@ -306,7 +306,7 @@
                  (do ((lst '() (cons (ra2l (cdr dims) (cons idx idxs)) lst))
                       (idx (+ -1 (car dims)) (+ -1 idx)))
                      ((negative? idx) lst)))))
-    (ra2l (array..dimensions ra) '())))
+    (ra2l (array$dimensions ra) '())))
 
 ;;@args vect proto dim1 @dots{}
 ;;@1 must be a vector of length equal to the product of exact
@@ -354,7 +354,7 @@
 ;;@end example
 (define-function (array->vector ra)
   (cl:let (dims)
-    (setq dims (array..dimensions ra))
+    (setq dims (array$dimensions ra))
     (let* ((vdx (apply #'* dims))
            (vect (make-vector vdx)) )
       (labels ((ra2v (dims idxs)
@@ -368,8 +368,8 @@
         (ra2v dims '())
         vect ) )))
 
-(define-function (array..in-bounds? array indices)
-  (do ((bnds (array..dimensions array) (cdr bnds))
+(define-function (array$in-bounds? array indices)
+  (do ((bnds (array$dimensions array) (cdr bnds))
        (idxs indices (cdr idxs)) )
       ((or (null? bnds)
 	   (null? idxs)
@@ -381,32 +381,32 @@
 ;;Returns @code{T} if its arguments would be acceptable to
 ;;@code{array-ref}.
 (define-function (array-in-bounds? array . indices)
-  (array..in-bounds? array indices) )
+  (array$in-bounds? array indices) )
 
 ;;@args array k1 @dots{}
 ;;Returns the (@2, @dots{}) element of @1.
 (define-function (array-ref array . indices)
   (cl:let (store)
-    (setq store (array..store array))
-    (or (array..in-bounds? array indices)
+    (setq store (array$store array))
+    (or (array$in-bounds? array indices)
         (error 'array-ref 'bad-indices indices) )
     (funcall (if (string? store) #'string-ref #'aref)
      store (apply #'+
-                  (array..offset array)
-                  (map #'* (array..scales array) indices) ))))
+                  (array$offset array)
+                  (map #'* (array$scales array) indices) ))))
 
 ;;@args array obj k1 @dots{}
 ;;Stores @2 in the (@3, @dots{}) element of @1.  The value returned
 ;;by @0 is unspecified.
 (define-function (array-set! array obj . indices)
   (cl:let (store)
-    (setq store (array..store array))
-    (or (array..in-bounds? array indices)
+    (setq store (array$store array))
+    (or (array$in-bounds? array indices)
         (error 'array-set! 'bad-indices indices) )
     (funcall
      (if (string? store) #'string-set! #'vector-set!)
-     store (apply #'+ (array..offset array) (map #'*
-                                                 (array..scales array) indices))
+     store (apply #'+ (array$offset array) (map #'*
+                                                 (array$scales array) indices))
      obj )))
 
 ;;@noindent
@@ -435,32 +435,32 @@
 	     ((or (zero? num) (negative? n))
 	      (zero? num))))))
 
-;;@defun A:floC128b z
-;;@defunx A:floC128b
+;;@defun A$floC128b z
+;;@defunx A$floC128b
 ;;Returns an inexact 128.bit flonum complex uniform-array prototype.
 ;;@end defun
-(define-function A:floC128b
-  (make-prototype-checker 'A:floC128b #'complex? #'vector))
-;;@defun A:floC64b z
-;;@defunx A:floC64b
+(define-function A$floC128b
+  (make-prototype-checker 'A$floC128b #'complex? #'vector))
+;;@defun A$floC64b z
+;;@defunx A$floC64b
 ;;Returns an inexact 64.bit flonum complex uniform-array prototype.
 ;;@end defun
-(define-function A:floC64b
-  ;; A:floC64b
-  (make-prototype-checker 'A:floC64b
+(define-function A$floC64b
+  ;; A$floC64b
+  (make-prototype-checker 'A$floC64b
                           #'complex?
                           (lambda (&rest args)
                             (cl:make-array (if args 1 0)
                                            :element-type
                                            '(or double-float complex)
                                            :initial-element 0d0))))
-;;@defun A:floC32b z
-;;@defunx A:floC32b
+;;@defun A$floC32b z
+;;@defunx A$floC32b
 ;;Returns an inexact 32.bit flonum complex uniform-array prototype.
 ;;@end defun
-(define-function A:floC32b
-  ;; A:floC32b
-  (make-prototype-checker 'A:floC32b
+(define-function A$floC32b
+  ;; A$floC32b
+  (make-prototype-checker 'A$floC32b
                           #'complex?
                           (lambda (&rest args)
                             (cl:make-array (if args 1 0)
@@ -468,140 +468,140 @@
                                            '(or single-float complex)
                                            :initial-element 0s0))))
 
-;;@defun A:floC16b z
-;;@defunx A:floC16b
+;;@defun A$floC16b z
+;;@defunx A$floC16b
 ;;Returns an inexact 16.bit flonum complex uniform-array prototype.
 ;;@end defun
-(define-function A:floC16b
-  (make-prototype-checker 'A:floC16b #'complex? #'vector))
+(define-function A$floC16b
+  (make-prototype-checker 'A$floC16b #'complex? #'vector))
 
-;;@defun A:floR128b x
-;;@defunx A:floR128b
+;;@defun A$floR128b x
+;;@defunx A$floR128b
 ;;Returns an inexact 128.bit flonum real uniform-array prototype.
 ;;@end defun
-(define-function A:floR128b
-  (make-prototype-checker 'A:floR128b #'real? #'vector))
-;;@defun A:floR64b x
-;;@defunx A:floR64b
+(define-function A$floR128b
+  (make-prototype-checker 'A$floR128b #'real? #'vector))
+;;@defun A$floR64b x
+;;@defunx A$floR64b
 ;;Returns an inexact 64.bit flonum real uniform-array prototype.
 ;;@end defun
-(define-function A:floR64b
-  ;; A:floR64b
-  (make-prototype-checker 'A:floR64b #'real? #'srfi-4:f64vector))
-;;@defun A:floR32b x
-;;@defunx A:floR32b
+(define-function A$floR64b
+  ;; A$floR64b
+  (make-prototype-checker 'A$floR64b #'real? #'srfi-4:f64vector))
+;;@defun A$floR32b x
+;;@defunx A$floR32b
 ;;Returns an inexact 32.bit flonum real uniform-array prototype.
 ;;@end defun
-(define-function A:floR32b
-  ;;  A:floR32b
-  (make-prototype-checker 'A:floR32b #'real? #'srfi-4:f32vector))
-;;@defun A:floR16b x
-;;@defunx A:floR16b
+(define-function A$floR32b
+  ;;  A$floR32b
+  (make-prototype-checker 'A$floR32b #'real? #'srfi-4:f32vector))
+;;@defun A$floR16b x
+;;@defunx A$floR16b
 ;;Returns an inexact 16.bit flonum real uniform-array prototype.
 ;;@end defun
-(define-function A:floR16b
-  (make-prototype-checker 'A:floR16b #'real? #'vector))
+(define-function A$floR16b
+  (make-prototype-checker 'A$floR16b #'real? #'vector))
 
-;;@defun A:floR128d q
-;;@defunx A:floR128d
+;;@defun A$floR128d q
+;;@defunx A$floR128d
 ;;Returns an exact 128.bit decimal flonum rational uniform-array prototype.
 ;;@end defun
-(define-function A::floR128d
-  (make-prototype-checker 'A::floR128d #'real? #'vector))
-;;@defun A:floR64d q
-;;@defunx A:floR64d
+(define-function A$floR128d
+  (make-prototype-checker 'A$floR128d #'real? #'vector))
+;;@defun A$floR64d q
+;;@defunx A$floR64d
 ;;Returns an exact 64.bit decimal flonum rational uniform-array prototype.
 ;;@end defun
-(define-function A::floR64d
-  (make-prototype-checker 'A::floR64d #'real? #'vector))
-;;@defun A:floR32d q
-;;@defunx A:floR32d
+(define-function A$floR64d
+  (make-prototype-checker 'A$floR64d #'real? #'vector))
+;;@defun A$floR32d q
+;;@defunx A$floR32d
 ;;Returns an exact 32.bit decimal flonum rational uniform-array prototype.
 ;;@end defun
-(define-function A::floR32d
-  (make-prototype-checker 'A::floR32d #'real? #'vector))
+(define-function A$floR32d
+  (make-prototype-checker 'A$floR32d #'real? #'vector))
 
-;;@defun A:fixZ64b n
-;;@defunx A:fixZ64b
+;;@defun A$fixZ64b n
+;;@defunx A$fixZ64b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
 ;;64 bits of precision.
 ;;@end defun
-(define-function A:fixZ64b
-  ;; A:fixZ64b
-  (make-prototype-checker 'A:fixZ64b (integer-bytes?? -8) #'srfi-4:s64vector))
-;;@defun A:fixZ32b n
-;;@defunx A:fixZ32b
+(define-function A$fixZ64b
+  ;; A$fixZ64b
+  (make-prototype-checker 'A$fixZ64b (integer-bytes?? -8) #'srfi-4:s64vector))
+;;@defun A$fixZ32b n
+;;@defunx A$fixZ32b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
 ;;32 bits of precision.
 ;;@end defun
-(define-function A:fixZ32b
-  ;; A:fixZ32b
-  (make-prototype-checker 'A:fixZ32b (integer-bytes?? -4) #'srfi-4:s32vector))
-;;@defun A:fixZ16b n
-;;@defunx A:fixZ16b
+(define-function A$fixZ32b
+  ;; A$fixZ32b
+  (make-prototype-checker 'A$fixZ32b (integer-bytes?? -4) #'srfi-4:s32vector))
+;;@defun A$fixZ16b n
+;;@defunx A$fixZ16b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
 ;;16 bits of precision.
 ;;@end defun
-(define-function A:fixZ16b
-  ;; A:fixZ16b
-  (make-prototype-checker 'A:fixZ16b (integer-bytes?? -2) #'srfi-4:s16vector))
-;;@defun A:fixZ8b n
-;;@defunx A:fixZ8b
+(define-function A$fixZ16b
+  ;; A$fixZ16b
+  (make-prototype-checker 'A$fixZ16b (integer-bytes?? -2) #'srfi-4:s16vector))
+;;@defun A$fixZ8b n
+;;@defunx A$fixZ8b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
 ;;8 bits of precision.
 ;;@end defun
-(define-function A:fixZ8b
-  ;; A:fixZ8b
-  (make-prototype-checker 'A:fixZ8b (integer-bytes?? -1) #'srfi-4:s8vector))
+(define-function A$fixZ8b
+  ;; A$fixZ8b
+  (make-prototype-checker 'A$fixZ8b (integer-bytes?? -1) #'srfi-4:s8vector))
 
-;;@defun A:fixN64b k
-;;@defunx A:fixN64b
+;;@defun A$fixN64b k
+;;@defunx A$fixN64b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
 ;;least 64 bits of precision.
 ;;@end defun
-(define-function A:fixN64b
-  ;; A:fixN64b
-  (make-prototype-checker 'A:fixN64b (integer-bytes?? 8) #'srfi-4:u64vector))
-;;@defun A:fixN32b k
-;;@defunx A:fixN32b
+(define-function A$fixN64b
+  ;; A$fixN64b
+  (make-prototype-checker 'A$fixN64b (integer-bytes?? 8) #'srfi-4:u64vector))
+;;@defun A$fixN32b k
+;;@defunx A$fixN32b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
 ;;least 32 bits of precision.
 ;;@end defun
-(define-function A:fixN32b
-  ;; A:fixN32b
-  (make-prototype-checker 'A:fixN32b (integer-bytes?? 4) #'srfi-4:u32vector))
-;;@defun A:fixN16b k
-;;@defunx A:fixN16b
+(define-function A$fixN32b
+  ;; A$fixN32b
+  (make-prototype-checker 'A$fixN32b (integer-bytes?? 4) #'srfi-4:u32vector))
+;;@defun A$fixN16b k
+;;@defunx A$fixN16b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
 ;;least 16 bits of precision.
 ;;@end defun
-(define-function A:fixN16b
-  ;; A:fixN16b
-  (make-prototype-checker 'A:fixN16b (integer-bytes?? 2) #'srfi-4:u16vector))
-;;@defun A:fixN8b k
-;;@defunx A:fixN8b
+(define-function A$fixN16b
+  ;; A$fixN16b
+  (make-prototype-checker 'A$fixN16b (integer-bytes?? 2) #'srfi-4:u16vector))
+;;@defun A$fixN8b k
+;;@defunx A$fixN8b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
 ;;least 8 bits of precision.
 ;;@end defun
-(define-function A:fixN8b
-  ;; A:fixN8b
-  (make-prototype-checker 'A:fixN8b (integer-bytes?? 1) #'srfi-4:u8vector))
+(define-function A$fixN8b
+  ;; A$fixN8b
+  (make-prototype-checker 'A$fixN8b (integer-bytes?? 1) #'srfi-4:u8vector))
 
-;;@defun A:bool bool
-;;@defunx A:bool
+;;@defun A$bool bool
+;;@defunx A$bool
 ;;Returns a boolean uniform-array prototype.
 ;;@end defun
-(define-function A:bool
-  ;; A:bool
-  (make-prototype-checker 'A:bool #'boolean? #'vector))
+(define-function A$bool
+  ;; A$bool
+  (make-prototype-checker 'A$bool #'boolean? #'vector))
 
 
-(defmethod make-load-form ((obj array..rtd)
+(defmethod make-load-form ((obj array$rtd)
                            &optional env)
   (declare (ignore env))
-  `(array..construct ',(*array..dimensions obj)
-                     ',(*array..scales obj)
-                     ,(*array..offset obj)
-                     ,(*array..store obj)))
+  `(array$construct ',(*array$dimensions obj)
+                    ',(*array$scales obj)
+                    ,(*array$offset obj)
+                    ,(*array$store obj)))
 
 ;;; eof
