@@ -487,14 +487,14 @@
 ;;@end defun
 (define-function A$floR64b
   ;; A$floR64b
-  (make-prototype-checker 'A$floR64b #'real? #'srfi-4:f64vector))
+  (make-prototype-checker 'A$floR64b #'real? #'f64vector))
 ;;@defun A$floR32b x
 ;;@defunx A$floR32b
 ;;Returns an inexact 32.bit flonum real uniform-array prototype.
 ;;@end defun
 (define-function A$floR32b
   ;;  A$floR32b
-  (make-prototype-checker 'A$floR32b #'real? #'srfi-4:f32vector))
+  (make-prototype-checker 'A$floR32b #'real? #'f32vector))
 ;;@defun A$floR16b x
 ;;@defunx A$floR16b
 ;;Returns an inexact 16.bit flonum real uniform-array prototype.
@@ -528,7 +528,7 @@
 ;;@end defun
 (define-function A$fixZ64b
   ;; A$fixZ64b
-  (make-prototype-checker 'A$fixZ64b (integer-bytes?? -8) #'srfi-4:s64vector))
+  (make-prototype-checker 'A$fixZ64b (integer-bytes?? -8) #'s64vector))
 ;;@defun A$fixZ32b n
 ;;@defunx A$fixZ32b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
@@ -536,7 +536,7 @@
 ;;@end defun
 (define-function A$fixZ32b
   ;; A$fixZ32b
-  (make-prototype-checker 'A$fixZ32b (integer-bytes?? -4) #'srfi-4:s32vector))
+  (make-prototype-checker 'A$fixZ32b (integer-bytes?? -4) #'s32vector))
 ;;@defun A$fixZ16b n
 ;;@defunx A$fixZ16b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
@@ -544,7 +544,7 @@
 ;;@end defun
 (define-function A$fixZ16b
   ;; A$fixZ16b
-  (make-prototype-checker 'A$fixZ16b (integer-bytes?? -2) #'srfi-4:s16vector))
+  (make-prototype-checker 'A$fixZ16b (integer-bytes?? -2) #'s16vector))
 ;;@defun A$fixZ8b n
 ;;@defunx A$fixZ8b
 ;;Returns an exact binary fixnum uniform-array prototype with at least
@@ -552,7 +552,7 @@
 ;;@end defun
 (define-function A$fixZ8b
   ;; A$fixZ8b
-  (make-prototype-checker 'A$fixZ8b (integer-bytes?? -1) #'srfi-4:s8vector))
+  (make-prototype-checker 'A$fixZ8b (integer-bytes?? -1) #'s8vector))
 
 ;;@defun A$fixN64b k
 ;;@defunx A$fixN64b
@@ -561,7 +561,7 @@
 ;;@end defun
 (define-function A$fixN64b
   ;; A$fixN64b
-  (make-prototype-checker 'A$fixN64b (integer-bytes?? 8) #'srfi-4:u64vector))
+  (make-prototype-checker 'A$fixN64b (integer-bytes?? 8) #'u64vector))
 ;;@defun A$fixN32b k
 ;;@defunx A$fixN32b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
@@ -569,7 +569,7 @@
 ;;@end defun
 (define-function A$fixN32b
   ;; A$fixN32b
-  (make-prototype-checker 'A$fixN32b (integer-bytes?? 4) #'srfi-4:u32vector))
+  (make-prototype-checker 'A$fixN32b (integer-bytes?? 4) #'u32vector))
 ;;@defun A$fixN16b k
 ;;@defunx A$fixN16b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
@@ -577,7 +577,7 @@
 ;;@end defun
 (define-function A$fixN16b
   ;; A$fixN16b
-  (make-prototype-checker 'A$fixN16b (integer-bytes?? 2) #'srfi-4:u16vector))
+  (make-prototype-checker 'A$fixN16b (integer-bytes?? 2) #'u16vector))
 ;;@defun A$fixN8b k
 ;;@defunx A$fixN8b
 ;;Returns an exact non-negative binary fixnum uniform-array prototype with at
@@ -585,7 +585,7 @@
 ;;@end defun
 (define-function A$fixN8b
   ;; A$fixN8b
-  (make-prototype-checker 'A$fixN8b (integer-bytes?? 1) #'srfi-4:u8vector))
+  (make-prototype-checker 'A$fixN8b (integer-bytes?? 1) #'u8vector))
 
 ;;@defun A$bool bool
 ;;@defunx A$bool
